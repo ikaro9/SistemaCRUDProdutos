@@ -1,6 +1,7 @@
 package br.ikarodev.dao;
 
 import br.ikarodev.config.Conexao;
+import br.ikarodev.exception.PersistenciaException;
 import br.ikarodev.model.Produto;
 
 import java.sql.*;
@@ -8,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProdutoDAO {
-    public static void criarTabela()  {
+    public void criarTabela()  {
         String sql = "CREATE TABLE IF NOT EXISTS produtos (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, Nome TEXT UNIQUE NOT NULL, Categoria TEXT NOT NULL, Preço NUMERIC NOT NULL) ";
         try (Connection conn = Conexao.conectar(); Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
         }catch (SQLException e){
-            throw new RuntimeException("Erro ao criar tabela",e);
+            throw new PersistenciaException("Erro ao criar tabela",e);
         }
     }
 
@@ -25,7 +26,7 @@ public class ProdutoDAO {
             stmt.setBigDecimal(3, produto.getPreco());
             stmt.executeUpdate();
         }catch(SQLException e){
-            throw new RuntimeException("Erro ao inserir produto",e);
+            throw new PersistenciaException("Erro ao inserir produto",e);
         }
     }
 
@@ -41,7 +42,7 @@ public class ProdutoDAO {
                 produtos.add(produto);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar produtos",e);
+            throw new PersistenciaException("Erro ao listar produtos",e);
         }
             return produtos;
     }
@@ -55,7 +56,7 @@ public class ProdutoDAO {
             stmt.setInt(4, produto.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar produto",e);
+            throw new PersistenciaException("Erro ao atualizar produto",e);
         }
     }
 
@@ -72,7 +73,7 @@ public class ProdutoDAO {
                 }
         }
         }catch(SQLException e){
-                throw new RuntimeException("Erro ao buscar produto",e);
+                throw new PersistenciaException("Erro ao buscar produto",e);
             }
         return null;
     }
@@ -82,7 +83,7 @@ public class ProdutoDAO {
             stmt.setInt(1,id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao remover produto",e);
+            throw new PersistenciaException("Erro ao remover produto",e);
         }
     }
 
@@ -95,7 +96,7 @@ public class ProdutoDAO {
                 return rs.getInt(1)==0;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao acessar banco",e);
+            throw new PersistenciaException("Erro ao acessar banco",e);
         }
         return true;
     }
@@ -107,7 +108,7 @@ public class ProdutoDAO {
             stmt.execute(limparTabela);
             stmt.execute(resetarTabela);
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao limpar registros",e);
+            throw new PersistenciaException("Erro ao limpar registros",e);
         }
 
     }
@@ -116,10 +117,11 @@ public class ProdutoDAO {
       String sql = "SELECT 1 FROM produtos WHERE Nome = ?";
       try(Connection conn = Conexao.conectar();PreparedStatement stmt = conn.prepareStatement(sql)){
           stmt.setString(1,nome);
-          ResultSet rs = stmt.executeQuery();
-          return rs.next();
+          try(ResultSet rs = stmt.executeQuery()) {
+              return rs.next();
+          }
       } catch (SQLException e) {
-          throw new RuntimeException("Erro ao acessar banco",e);
+          throw new PersistenciaException("Erro ao acessar banco",e);
       }
     }
 }
