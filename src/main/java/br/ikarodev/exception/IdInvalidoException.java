@@ -1,6 +1,6 @@
 package br.ikarodev.exception;
 
-public class IdInvalidoException extends RuntimeException {
+public class IdInvalidoException extends NegociosException {
     public IdInvalidoException() {
         super("Id inválido.");
     }

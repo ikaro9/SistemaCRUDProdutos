@@ -77,7 +77,7 @@ public class ProdutoDAO {
             }
         return null;
     }
-    public void remover (Integer id) throws SQLException{
+    public void remover (Integer id) {
         String sql = "DELETE FROM produtos WHERE id = ?";
         try(Connection conn = Conexao.conectar();PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setInt(1,id);
@@ -87,7 +87,7 @@ public class ProdutoDAO {
         }
     }
 
-    public boolean estaVazio()throws SQLException{
+    public boolean estaVazio(){
         String sql = "SELECT COUNT(*) FROM produtos";
         try(Connection conn = Conexao.conectar();
             Statement stmt = conn.createStatement();
@@ -101,7 +101,7 @@ public class ProdutoDAO {
         return true;
     }
 
-    public void limpar() throws SQLException{
+    public void limpar() {
         String limparTabela = "DELETE FROM produtos";
         String resetarTabela = "DELETE FROM sqlite_sequence WHERE name = 'produtos'";
         try(Connection conn = Conexao.conectar();Statement stmt = conn.createStatement()){

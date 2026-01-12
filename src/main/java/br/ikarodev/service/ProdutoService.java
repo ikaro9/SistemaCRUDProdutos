@@ -36,6 +36,38 @@ public class ProdutoService {
         }
         return produto;
     }
+    public void removerProduto(Integer id){
+        if(id == null || id <= 0){
+            throw new IdInvalidoException();
+        }
+        Produto produto = produtoDao.buscar(id);
+        if(produto == null){
+            throw new ProdutoNaoEncontradoException();
+        }
+        produtoDao.remover(id);
+    }
+
+    public void limparProdutos(){
+        if(produtoDao.estaVazio()){
+            throw new EstaVazioException();
+        }
+        produtoDao.limpar();
+    }
+
+    public void atualizarProduto(String nome, String categoria,BigDecimal preco){
+        if(nome == null || nome.isBlank()){
+            throw new NomeInvalidoException();
+        }
+        if(preco.compareTo(BigDecimal.ZERO)<=0){
+            throw new PrecoInvalidoException();
+        }
+        if(produtoDao.jaExisteNome(nome)){
+            throw new ProdutoJaExisteException();
+        }
+        Produto produto = new Produto(nome, categoria, preco);
+        produtoDao.atualizar(produto);
+    }
+
 
 
 }
