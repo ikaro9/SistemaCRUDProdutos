@@ -16,12 +16,12 @@ public class Utilitarios {
             }
         }
     }
-    public Double lerDouble(String mensagem){
+    public BigDecimal lerBigDecimal(String mensagem){
         while(true){
             try{
-                System.out.println(mensagem);
+                System.out.print(mensagem);
                 String entrada = input.nextLine().replace(",",".");
-                return Double.parseDouble(entrada);
+                return new BigDecimal(entrada);
             } catch (NumberFormatException e) {
                 System.out.println("Entrada inválida. Por favor, digite uma entrada válida.");;
             }

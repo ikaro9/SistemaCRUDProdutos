@@ -12,7 +12,7 @@ public class Main {
         Menu menu = new Menu();
         menu.exibirMenu();
         }catch (PersistenciaException e){
-            System.err.println("Erro: " + e.getMessage());
+            System.err.println("[Erro]: " + e.getMessage());
         }
     }
 }

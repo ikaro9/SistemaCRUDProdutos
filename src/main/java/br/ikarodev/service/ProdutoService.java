@@ -40,7 +40,7 @@ public class ProdutoService {
         if(id == null || id <= 0){
             throw new IdInvalidoException();
         }
-        Produto produto = produtoDao.buscar(id);
+        Produto produto =buscarProduto(id);
         if(produto == null){
             throw new ProdutoNaoEncontradoException();
         }
@@ -54,7 +54,7 @@ public class ProdutoService {
         produtoDao.limpar();
     }
 
-    public void atualizarProduto(String nome, String categoria,BigDecimal preco){
+    public void atualizarProduto(Integer id,String nome, String categoria,BigDecimal preco){
         if(nome == null || nome.isBlank()){
             throw new NomeInvalidoException();
         }
@@ -64,7 +64,7 @@ public class ProdutoService {
         if(produtoDao.jaExisteNome(nome)){
             throw new ProdutoJaExisteException();
         }
-        Produto produto = new Produto(nome, categoria, preco);
+        Produto produto = new Produto(id,nome, categoria, preco);
         produtoDao.atualizar(produto);
     }
 
