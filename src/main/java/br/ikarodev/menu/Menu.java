@@ -54,14 +54,20 @@ public class Menu {
         System.out.print("Digite o nome do produto ('0' para cancelar): ");
         String nome = input.nextLine();
        if(utilitarios.cancelarAcao(nome)){
+           System.out.println("Operação cancelada.");
            return;
        }
         System.out.print("Digite a categoria do produto ('0' para cancelar): ");
         String Categoria = input.nextLine();
         if(utilitarios.cancelarAcao(Categoria)){
+            System.out.println("Operação cancelada.");
             return;
         }
         BigDecimal preco = utilitarios.lerBigDecimal("Digite o preço do produto ('0' para cancelar): ");
+        if (preco.compareTo(BigDecimal.ZERO)==0) {
+            System.out.println("Operação cancelada.");
+            return;
+        }
         try {
             produtoService.cadastrarProduto(nome, Categoria, preco);
             System.out.println("Produto cadastrado com sucesso!");
@@ -87,6 +93,10 @@ public class Menu {
     }
     public void buscarProduto(){
        Integer id = utilitarios.lerInteiro("Digite o id ('0' para cancelar): ");
+       if(id.equals(0)){
+           System.out.println("Operação cancelada.");
+           return;
+       }
         try {
             System.out.println(produtoService.buscarProduto(id));
         }catch (IdInvalidoException | ProdutoNaoEncontradoException e){
@@ -98,6 +108,10 @@ public class Menu {
     }
     public void atualizarProduto(){
         Integer id = utilitarios.lerInteiro("Digite o id ('0' para cancelar): ");
+        if(id.equals(0)){
+            System.out.println("Operação cancelada.");
+            return;
+        }
         try {
             Produto produto = produtoService.buscarProduto(id);
             System.out.println("Tem certeza que deseja atualizar" + produto.getNome() + "(S/N)  ('0' para cancelar) ?");
@@ -114,9 +128,21 @@ public class Menu {
             }while(!conf.equalsIgnoreCase("s") && !conf.equalsIgnoreCase("n"));
             System.out.print("Digite o nome do produto ('0' para cancelar): ");
             String nome = input.nextLine();
+            if(utilitarios.cancelarAcao(nome)){
+                System.out.println("Operação cancelada.");
+                return;
+            }
             System.out.print("Digite a categoria do produto ('0' para cancelar): ");
             String Categoria = input.nextLine();
+            if(utilitarios.cancelarAcao(Categoria)){
+                System.out.println("Operação cancelada.");
+                return;
+            }
             BigDecimal preco = utilitarios.lerBigDecimal("Digite o preço ('0' para cancelar): ");
+            if(preco.compareTo(BigDecimal.ZERO)==0){
+                System.out.println("Operação cancelada.");
+                return;
+            }
             produtoService.atualizarProduto(id, nome, Categoria, preco);
             System.out.println("Produto atualizado com sucesso!");
         }catch (IdInvalidoException | ProdutoNaoEncontradoException | NomeInvalidoException | PrecoInvalidoException | ProdutoJaExisteException e) {
@@ -128,14 +154,18 @@ public class Menu {
     }
     public void remover(){
         Integer id = utilitarios.lerInteiro("Digite o id ('0' para cancelar): ");
+        if(id.equals(0)){
+            System.out.println("Operação cancelada.");
+            return;
+        }
         try {
             Produto produto = produtoService.buscarProduto(id);
-            System.out.println("Tem certeza que deseja remover" + produto.getNome() + "(S/N) ('0' para cancelar)?");
+            System.out.println("Tem certeza que deseja remover" + produto.getNome() + "(S/N) ('0' para cancelar)? ");
             String conf;
             do{
              conf = input.nextLine();
              if(!conf.equalsIgnoreCase("s") && !conf.equalsIgnoreCase("n")){
-                 System.out.println("Digite S ou N para confirmação ('0' para cancelar) :");
+                 System.out.println("Digite S ou N para confirmação ('0' para cancelar): ");
              }
              if(conf.equalsIgnoreCase("n") || conf.equalsIgnoreCase("0")){
                  System.out.println("Operação cancelada.");
