@@ -27,4 +27,7 @@ public class Utilitarios {
             }
         }
     }
+    public boolean cancelarAcao(String string){
+        return string.equalsIgnoreCase("0");
+    }
 }

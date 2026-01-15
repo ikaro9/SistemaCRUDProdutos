@@ -23,6 +23,9 @@ public class ProdutoService {
         produtoDao.inserir(produto);
     }
     public List<Produto> listarProdutos(){
+        if(produtoDao.estaVazio()){
+            throw new EstaVazioException();
+        }
        return produtoDao.listar();
     }
 

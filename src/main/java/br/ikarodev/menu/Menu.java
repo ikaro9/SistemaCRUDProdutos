@@ -51,13 +51,20 @@ public class Menu {
       }while (opcao != 0);
     }
     public void cadastrarProduto(){
-        System.out.print("Digite o nome do produto: ");
+        System.out.print("Digite o nome do produto ('0' para cancelar): ");
         String nome = input.nextLine();
-        System.out.print("Digite a categoria do produto: ");
+       if(utilitarios.cancelarAcao(nome)){
+           return;
+       }
+        System.out.print("Digite a categoria do produto ('0' para cancelar): ");
         String Categoria = input.nextLine();
-        BigDecimal preco = utilitarios.lerBigDecimal("Digite o preço do produto: ");
+        if(utilitarios.cancelarAcao(Categoria)){
+            return;
+        }
+        BigDecimal preco = utilitarios.lerBigDecimal("Digite o preço do produto ('0' para cancelar): ");
         try {
             produtoService.cadastrarProduto(nome, Categoria, preco);
+            System.out.println("Produto cadastrado com sucesso!");
         }catch(NomeInvalidoException | PrecoInvalidoException | ProdutoJaExisteException e){
             System.out.println("[ERRO]: " + e.getMessage());
         }catch (PersistenciaException e){
@@ -71,13 +78,15 @@ public class Menu {
             for (Produto i : produtoService.listarProdutos()) {
                 System.out.println(i);
             }
-        }catch (PersistenciaException e){
+        }catch(EstaVazioException e){
+            System.out.println(e.getMessage());
+        } catch (PersistenciaException e){
             System.out.println("Erro ao listar produtos. Tente novamente mais tarde.");
             System.err.println("[ERRO]: " + e.getMessage());
         }
     }
     public void buscarProduto(){
-       Integer id = utilitarios.lerInteiro("Digite o id: ");
+       Integer id = utilitarios.lerInteiro("Digite o id ('0' para cancelar): ");
         try {
             System.out.println(produtoService.buscarProduto(id));
         }catch (IdInvalidoException | ProdutoNaoEncontradoException e){
@@ -88,16 +97,28 @@ public class Menu {
         }
     }
     public void atualizarProduto(){
-        Integer id = utilitarios.lerInteiro("Digite o id: ");
+        Integer id = utilitarios.lerInteiro("Digite o id ('0' para cancelar): ");
         try {
             Produto produto = produtoService.buscarProduto(id);
-            System.out.println("Você está editando " + produto.getNome());
-            System.out.print("Digite o nome do produto: ");
+            System.out.println("Tem certeza que deseja atualizar" + produto.getNome() + "(S/N)  ('0' para cancelar) ?");
+       String conf;
+            do{
+                conf = input.nextLine();
+                if(!conf.equalsIgnoreCase("s") && !conf.equalsIgnoreCase("n")){
+                    System.out.println("Digite S ou N para confirmação ('0' para cancelar): ");
+                }
+                if(conf.equalsIgnoreCase("n") || conf.equalsIgnoreCase("0")){
+                    System.out.println("Operação cancelada.");
+                    return;
+                }
+            }while(!conf.equalsIgnoreCase("s") && !conf.equalsIgnoreCase("n"));
+            System.out.print("Digite o nome do produto ('0' para cancelar): ");
             String nome = input.nextLine();
-            System.out.print("Digite a categoria do produto:");
+            System.out.print("Digite a categoria do produto ('0' para cancelar): ");
             String Categoria = input.nextLine();
-            BigDecimal preco = utilitarios.lerBigDecimal("Digite o preço: ");
-            produtoService.atualizarProduto(id,nome, Categoria, preco);
+            BigDecimal preco = utilitarios.lerBigDecimal("Digite o preço ('0' para cancelar): ");
+            produtoService.atualizarProduto(id, nome, Categoria, preco);
+            System.out.println("Produto atualizado com sucesso!");
         }catch (IdInvalidoException | ProdutoNaoEncontradoException | NomeInvalidoException | PrecoInvalidoException | ProdutoJaExisteException e) {
             System.out.println("[ERRO]: " + e.getMessage());
         }catch (PersistenciaException e){
@@ -106,9 +127,23 @@ public class Menu {
         }
     }
     public void remover(){
-        Integer id = utilitarios.lerInteiro("Digite o id: ");
+        Integer id = utilitarios.lerInteiro("Digite o id ('0' para cancelar): ");
         try {
+            Produto produto = produtoService.buscarProduto(id);
+            System.out.println("Tem certeza que deseja remover" + produto.getNome() + "(S/N) ('0' para cancelar)?");
+            String conf;
+            do{
+             conf = input.nextLine();
+             if(!conf.equalsIgnoreCase("s") && !conf.equalsIgnoreCase("n")){
+                 System.out.println("Digite S ou N para confirmação ('0' para cancelar) :");
+             }
+             if(conf.equalsIgnoreCase("n") || conf.equalsIgnoreCase("0")){
+                 System.out.println("Operação cancelada.");
+                 return;
+             }
+            }while (!conf.equalsIgnoreCase("s") && !conf.equalsIgnoreCase("n"));
             produtoService.removerProduto(id);
+            System.out.println("Produto removido com sucesso!");
         }catch (IdInvalidoException | ProdutoNaoEncontradoException e){
             System.out.println("[ERRO]: " + e.getMessage());
         }catch (PersistenciaException e){
@@ -118,7 +153,20 @@ public class Menu {
     }
    public void limpar(){
         try{
+            System.out.println("Tem certeza que deseja limpar os registros (S/N) ('0' para cancelar) ?.\n ATENÇÃO: ESSA OPERAÇÃO NÃO PODERÁ SER DESFEITA.");
+            String conf;
+            do{
+              conf = input.nextLine();
+                if(!conf.equalsIgnoreCase("s") && !conf.equalsIgnoreCase("n")){
+                    System.out.println("Digite S ou N para confirmação ('0' para cancelar): ");
+                }
+                if(conf.equalsIgnoreCase("n") || conf.equalsIgnoreCase("0")){
+                    System.out.println("Operação cancelada.");
+                    return;
+                }
+            }while (!conf.equalsIgnoreCase("s") && !conf.equalsIgnoreCase("n"));
             produtoService.limparProdutos();
+            System.out.println("Operação realizada com sucesso.");
         }catch (EstaVazioException e){
             System.out.println(e.getMessage());
         }catch (PersistenciaException e){
